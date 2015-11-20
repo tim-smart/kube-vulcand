@@ -165,7 +165,7 @@ func register(pod api.Pod) {
 
 	podUrl := fmt.Sprintf("http://%v:%v", pod.Status.PodIP, pod.Spec.Containers[0].Ports[0].ContainerPort)
 
-	backendKey := fmt.Sprintf("/vulcan/backends/%v-%v/backend", pod.Namespace, pod.Labels["name"])
+	backendKey := fmt.Sprintf("/vulcand/backends/%v-%v/backend", pod.Namespace, pod.Labels["name"])
 	_, err := client.Get(backendKey, false, false)
 	if err != nil {
 		log.Printf("Can't retrieve backend on key %v\n", backendKey)
@@ -173,7 +173,7 @@ func register(pod api.Pod) {
 		return
 	}
 
-	serverKey := fmt.Sprintf("vulcan/backends/%v-%v/servers/%v", pod.Namespace, pod.Labels["name"], pod.Status.PodIP)
+	serverKey := fmt.Sprintf("vulcand/backends/%v-%v/servers/%v", pod.Namespace, pod.Labels["name"], pod.Status.PodIP)
 
 	if _, err := client.Set(serverKey, `{"URL": "` + podUrl + `"}`, 0); err != nil {
 		log.Fatal(err)
@@ -184,7 +184,7 @@ func register(pod api.Pod) {
 Delete a backend server from Vulcan when a Pod is deleted.
  */
 func deletePod(pod api.Pod) {
-	key := fmt.Sprintf("vulcan/backends/%v-%v/servers/%v", pod.Namespace, pod.Labels["name"],pod.Status.PodIP)
+	key := fmt.Sprintf("vulcand/backends/%v-%v/servers/%v", pod.Namespace, pod.Labels["name"],pod.Status.PodIP)
 
 	log.Printf("Deleting backend %v from %v", key, etcdAddress)
 
